@@ -53,3 +53,69 @@ Implementar do zero a Iteration 3 (Expo + RN) do projeto da faculdade: criar `to
 ## Current Status
 
 **IN PROGRESS** — setup local pronto; em seguida o push inicial para o GitHub e a implementação de SQLite, telas, contexto e notificações.
+
+## Incremento — Formulário dinâmico de tarefas
+
+### Decision Summary
+
+- Adicionada a rota `src/app/editor/[id].tsx`, usando Expo Router para distinguir criação (`new`) e edição por ID.
+- Como não havia esquema SQLite no projeto, a tela abre `todo.db` de forma assíncrona e cria `tasks` e `categories` apenas se ainda não existirem.
+- Quando a tabela de categorias está vazia, são inseridas categorias iniciais; a lista do formulário é sempre consultada da tabela `categories`.
+- Lembretes de prazo usam `expo-notifications` somente em plataformas nativas, protegidos por verificação de plataforma e `try/catch`.
+- A saída Web mudou de `static` para `single` porque o `@expo/metro-config` 57.0.13 falha ao servir workers em bundles lazy com saída `static`; a saída SPA é compatível com essa rota client-side.
+
+### Actions Performed
+
+1. Criada a tela de formulário com título obrigatório, descrição, data, hora, categoria e status.
+2. Implementados carregamento/edição, `INSERT`, `UPDATE`, exclusão com confirmação e retorno à tela inicial.
+3. Adicionada validação dos formatos de data/hora e proteção de notificações para Web.
+4. Configurado o Metro para incluir WASM do SQLite e adicionados cabeçalhos COOP/COEP para hosting Web.
+5. Organizadas as telas existentes no grupo `(tabs)` e configurado um Stack raiz para deixar o editor fora do navegador de abas.
+
+### Result
+
+- A rota suporta criar, editar e excluir tarefas persistidas no banco `todo.db`.
+- O seletor de categorias exibe os registros reais de `categories`.
+- O teste no navegador criou uma tarefa temporária, atualizou seu título e confirmou a persistência após recarregar, depois excluiu o registro; a tela retornou à Home.
+- `npx tsc --noEmit` passou e `npx expo export --platform web` concluiu com a rota dinâmica incluída.
+- O lint não foi executado: o projeto não tem ESLint configurado e a instalação foi recusada para manter o escopo.
+
+### Problems/Errors
+
+- Não havia implementação ou documentação local que definisse o esquema do banco; a tela passa a inicializar o esquema mínimo descrito acima.
+- A primeira exportação Web não encontrou o asset WASM; a configuração de Metro acima resolveu o problema.
+- O servidor Web em modo dev encontrou o bug `Worker chunk not found` do Metro 57 com `web.output: static`; `web.output: single` evita o caso afetado.
+- A raiz do template tratava todas as rotas como abas; o editor passou para um Stack de nível raiz e Home/Explore para `(tabs)`.
+- `expo lint` encerra com erro quando ESLint não está configurado.
+
+### Fixes Attempted
+
+- Incluído `wasm` em `resolver.assetExts` no Metro; a exportação Web passou após o ajuste.
+- Alterada a saída Web para `single`, evitando o erro de worker do Metro 57 no servidor de desenvolvimento.
+- Criado um Stack raiz e um grupo `(tabs)` para que `/editor/[id]` seja uma tela dinâmica, não uma aba.
+
+### Current Status
+
+**IN PROGRESS** — formulário implementado; typecheck e CRUD no navegador aprovados. ESLint permanece sem configuração por decisão de escopo; as demais telas e o fluxo completo da Iteration 3 continuam pendentes.
+
+## Incremento — Listagem de tarefas na rota raiz
+
+### Decision Summary
+
+- A rota `/` é representada por `src/app/(tabs)/index.tsx`; esse arquivo ainda renderizava o scaffold “Welcome to Expo”.
+- A rota inicial agora renderiza `TaskList`, com dados lidos de `todo.db`, e compartilha o inicializador SQLite com o editor.
+
+### Actions Performed
+
+1. Criado `src/components/task-list.tsx` para listar tarefas, mostrar estado vazio e contadores, concluir tarefas e abrir criação/edição.
+2. Extraída a abertura e inicialização de `todo.db` para `src/lib/todo-database.ts`, reutilizada pela lista e pelo editor.
+3. Substituído o conteúdo genérico da rota inicial pelo componente `TaskList`.
+
+### Result
+
+- A rota `/` abre diretamente a listagem; não é necessário um redirect para outra tela.
+- Typecheck e exportação Web passaram. No navegador, uma tarefa criada apareceu na lista e pôde ser excluída.
+
+### Current Status
+
+**IN PROGRESS** — listagem conectada ao SQLite na rota raiz; as demais telas e o fluxo completo da Iteration 3 continuam pendentes.
