@@ -41,7 +41,7 @@ export default function TabTwoScreen() {
         <ThemedView style={styles.titleContainer}>
           <ThemedText type="subtitle">Explore</ThemedText>
           <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
+            This starter app includes example{ '\n' }code to help you get started.
           </ThemedText>
 
           <ExternalLink href="https://docs.expo.dev" asChild>
@@ -103,7 +103,7 @@ export default function TabTwoScreen() {
             <ThemedText type="small">
               This template has light and dark mode support. The{' '}
               <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
+              user&apos;s current color scheme is, and so you can adjust your colors accordingly.
             </ThemedText>
             <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
               <ThemedText type="linkPrimary">Learn more</ThemedText>
@@ -112,7 +112,7 @@ export default function TabTwoScreen() {
 
           <Collapsible title="Animations">
             <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
+              This template includes an animated component. The{' '}
               <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
               the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
               animate opening this hint.
